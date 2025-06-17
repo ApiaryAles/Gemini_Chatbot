@@ -30,7 +30,7 @@ except Exception as e:
 
 
 # --- NEW: GOOGLE SEARCH FUNCTION ---
-def perform_Google Search(query: str):
+def googlesearch(query: str):
     """Performs a Google search and returns formatted results."""
     try:
         url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
@@ -102,7 +102,7 @@ def chatbot_app():
         with st.spinner("Thinking..."):
             # NEW: Perform search and create a contextual prompt
             with st.spinner("Performing live search..."):
-                search_context = perform_Google Search(query=prompt)
+                search_context = googlesearch(query=prompt)
             
             contextual_prompt = f"""
             Based on the following real-time search results, please answer the user's question.
