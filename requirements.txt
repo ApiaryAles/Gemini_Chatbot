@@ -1,4 +1,4 @@
-# requirements.txt
 streamlit
 google-generativeai
 python-dotenv
+st-supabase-connection
