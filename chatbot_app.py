@@ -30,7 +30,7 @@ except Exception as e:
 
 
 # --- NEW: GOOGLE SEARCH FUNCTION ---
-def perform_Google_Search(query: str):
+def perform_Google Search(query: str):
     """Performs a Google search and returns formatted results."""
     try:
         url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
