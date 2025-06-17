@@ -31,8 +31,9 @@ except Exception as e:
 # --- DATABASE FUNCTIONS (Unchanged) ---
 # The rest of the code does not need to change, as it now has the 'supabase' client object.
 def load_history():
-    """Loads chat history from the Supabase database."""
-    query = supabase.query("*", table="chat_history", order="created_at", count="exact").execute()
+    """Loads chat history from the Supabase database using the correct syntax."""
+    # The modern syntax is .table("...").select("...").order("...").execute()
+    query = supabase.table("chat_history").select("*").order("created_at").execute()
     return query.data
 
 def save_history(role, content):
