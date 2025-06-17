@@ -1,21 +1,27 @@
-# chatbot_app.py - FINAL VERSION 7 (Secrets Workaround)
+# chatbot_app.py - FINAL VERSION 8 (Manual Supabase Connection)
 
 import streamlit as st
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
-from st_supabase_connection import SupabaseConnection
+from supabase import create_client, Client # NEW: Import the manual client
 
 # --- SETUP AND CONSTANTS ---
 load_dotenv()
 
 # --- CONFIGURE THE GEMINI API & SUPABASE ---
 try:
-    # MODIFIED: Look for the key inside the [app_secrets] table
+    # Configure Gemini (Unchanged)
     genai.configure(api_key=st.secrets["app_secrets"]["GEMINI_API_KEY"])
     model = genai.GenerativeModel('gemini-1.5-flash')
-
-    supabase = st.connection("supabase", type=SupabaseConnection)
+    
+    # --- MANUAL SUPABASE CONNECTION (NEW) ---
+    # This section replaces the failing st.connection() call.
+    # It reads the secrets directly and creates the Supabase client manually.
+    url: str = st.secrets["connections"]["supabase"]["url"]
+    key: str = st.secrets["connections"]["supabase"]["key"]
+    supabase: Client = create_client(url, key)
+    # -----------------------------------------
 
 except Exception as e:
     st.error(f"Error initializing services: {e}")
@@ -23,6 +29,7 @@ except Exception as e:
 
 
 # --- DATABASE FUNCTIONS (Unchanged) ---
+# The rest of the code does not need to change, as it now has the 'supabase' client object.
 def load_history():
     """Loads chat history from the Supabase database."""
     query = supabase.query("*", table="chat_history", order="created_at", count="exact").execute()
@@ -33,7 +40,7 @@ def save_history(role, content):
     supabase.table("chat_history").insert([{"role": role, "content": content}]).execute()
 
 
-# --- PASSWORD FUNCTION (MODIFIED) ---
+# --- PASSWORD FUNCTION (Unchanged) ---
 def check_password():
     """Shows a password form and sets session state upon submission."""
     with st.form("password_form"):
@@ -41,7 +48,6 @@ def check_password():
         submitted = st.form_submit_button("Enter")
 
         if submitted:
-            # MODIFIED: Look for the password inside the [app_secrets] table
             correct_password = st.secrets["app_secrets"]["CHATBOT_PASSWORD"]
             if password_input == correct_password:
                 st.session_state["password_correct"] = True
@@ -61,7 +67,7 @@ def chatbot_app():
         history_for_gemini = []
         for msg in db_history:
             history_for_gemini.append({"role": msg["role"], "parts": [msg["content"]]})
-
+        
         st.session_state.chat = model.start_chat(history=history_for_gemini)
 
     for message in st.session_state.chat.history:
