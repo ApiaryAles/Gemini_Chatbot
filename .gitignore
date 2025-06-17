@@ -6,3 +6,6 @@
 
 # Ignore conversation history data
 chat_history.json
+
+# Ignore any plain text password files
+Cloud password.txt
