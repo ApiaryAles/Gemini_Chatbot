@@ -1,0 +1,8 @@
+# Ignore local environment files
+.env
+
+# Ignore Streamlit configuration and secrets
+.streamlit/
+
+# Ignore conversation history data
+chat_history.json
