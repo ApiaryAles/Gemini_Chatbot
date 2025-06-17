@@ -98,3 +98,4 @@ if st.session_state.get("password_correct", False):
 else:
     check_password()
 # Forcing a Git update
+# Forcing a full system reboot - V2
