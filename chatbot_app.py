@@ -151,10 +151,12 @@ def chatbot_app():
             # Perform PDF Retrieval
             with st.spinner("Retrieving from internal documents..."):
                 pdf_context = retrieve_pdf_chunks(query=prompt, top_k=5, match_threshold=0.75) 
-            
+            st.write(f"DEBUG APP: PDF Context: {pdf_context}") # ADD THIS LINE
+
             # Perform Google Search
             with st.spinner("Performing live Google search..."):
-                search_context = perform_Google_Search(query=prompt) # This function call is now corrected
+                search_context = perform_Google_Search(query=prompt) 
+            st.write(f"DEBUG APP: Google Search Context: {search_context}")
             
             # Combine all contexts into a single prompt for Gemini
             contextual_prompt = f"""
