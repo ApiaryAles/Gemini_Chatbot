@@ -132,4 +132,52 @@ def chatbot_app():
         for msg in db_history:
             history_for_gemini.append({"role": msg["role"], "parts": [msg["content"]]})
         
-        st.session_state.chat = model.
+        st.session_state.chat = model.start_chat(history=history_for_gemini)
+
+    for message in st.session_state.chat.history:
+        role = "assistant" if message.role == "model" else message.role
+        with st.chat_message(role):
+            st.markdown(message.parts[0].text)
+
+    if prompt := st.chat_input("What would you like to ask?"):
+        save_history("user", prompt)
+        with st.chat_message("user"):
+            st.markdown(prompt)
+
+        with st.spinner("Thinking..."):
+            # Perform PDF Retrieval
+            with st.spinner("Retrieving from internal documents..."):
+                pdf_context = retrieve_pdf_chunks(query=prompt, top_k=5, match_threshold=0.75) 
+
+            # Perform Google Search
+            with st.spinner("Performing live Google search..."):
+                search_context = perform_Google Search(query=prompt) 
+            
+            # Combine all contexts into a single prompt for Gemini
+            contextual_prompt = f"""
+            You are a helpful AI assistant. Answer the user's question by combining information from the provided internal documentation and real-time Google search results. Prioritize internal documentation if directly relevant and comprehensive. If information is contradictory, mention the discrepancy. If neither source provides sufficient information, state that.
+
+            Internal Documentation Context:
+            ---
+            {pdf_context}
+            ---
+            
+            Google Search Results:
+            ---
+            {search_context}
+            ---
+            
+            User's Question: "{prompt}"
+            """
+            
+            response = st.session_state.chat.send_message(contextual_prompt)
+            save_history("model", response.text)
+            with st.chat_message("assistant"):
+                st.markdown(response.text)
+
+
+# --- MAIN CONTROLLER ---
+if st.session_state.get("password_correct", False):
+    chatbot_app()
+else:
+    check_password()
