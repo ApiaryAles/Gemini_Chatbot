@@ -151,7 +151,7 @@ def chatbot_app():
 
             # Perform Google Search
             with st.spinner("Performing live Google search..."):
-                search_context = perform_Google Search(query=prompt) 
+                search_context = perform_Google_Search(query=prompt) 
             
             # Combine all contexts into a single prompt for Gemini
             contextual_prompt = f"""
