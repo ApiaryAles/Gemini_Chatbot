@@ -1,6 +1,13 @@
 streamlit
-google-generativeai
 python-dotenv
-st-supabase-connection
 supabase
+pypdf
+langchain
+langchain-community
+langchain-google-genai
+google-generativeai==0.8.5
+google-ai-generativelanguage==0.6.15
+google-auth
+google-api-core
+google-cloud-aiplatform
 requests
