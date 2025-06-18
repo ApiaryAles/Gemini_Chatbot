@@ -42,7 +42,7 @@ except Exception as e:
 
 # --- GOOGLE SEARCH FUNCTION ---
 # This function's name is now correctly formatted with underscores.
-def perform_Google Search(query: str):
+def perform_Google_Search(query: str):
     """Performs a Google search and returns formatted results."""
     try:
         url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
@@ -154,7 +154,7 @@ def chatbot_app():
             
             # Perform Google Search
             with st.spinner("Performing live Google search..."):
-                search_context = perform_Google Search(query=prompt) # This function call is now corrected
+                search_context = perform_Google_Search(query=prompt) # This function call is now corrected
             
             # Combine all contexts into a single prompt for Gemini
             contextual_prompt = f"""
