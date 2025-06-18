@@ -39,8 +39,13 @@ except Exception as e:
     st.stop()
 
 
+<<<<<<< HEAD
 # --- GOOGLE SEARCH FUNCTION (SYNTAX CORRECTED) ---
 def perform_Google_Search(query: str): # <<< THIS LINE IS NOW CORRECTED WITH UNDERSCORE
+=======
+# --- NEW: GOOGLE SEARCH FUNCTION ---
+def googlesearch(query: str):
+>>>>>>> 5891018ea99ef89e56ddf070e36312232f229192
     """Performs a Google search and returns formatted results."""
     try:
         url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
@@ -146,10 +151,16 @@ def chatbot_app():
             st.markdown(prompt)
 
         with st.spinner("Thinking..."):
-            # Perform PDF Retrieval
+<<<<<<< HEAD
+      # Perform PDF Retrieval
             with st.spinner("Retrieving from internal documents..."):
                 # Retrieve top 5 relevant chunks with a similarity threshold
                 pdf_context = retrieve_pdf_chunks(query=prompt, top_k=5, match_threshold=0.75) 
+            
+            # Perform Google Search
+            with st.spinner("Performing live Google search..."):
+                search_context = perform_Google_Search(query=prompt) # Keep this line, ensuring 'perform_Google Search' is used     
+>>>>>>> 5891018ea99ef89e56ddf070e36312232f229192
             
             # Google Search (existing)
             with st.spinner("Performing live Google search..."):
