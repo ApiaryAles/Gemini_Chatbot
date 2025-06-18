@@ -1,12 +1,10 @@
-# chatbot_app.py - FINAL, CLEAN, AND CORRECTED VERSION
-
 import streamlit as st
 import google.generativeai as genai
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 import requests # For making API calls (Google Search)
-from langchain_google_genai import GoogleGenerativeAIEmbeddings # NEW: For embeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings # For embeddings
 
 
 # --- SETUP AND CONSTANTS ---
@@ -18,7 +16,7 @@ try:
     genai.configure(api_key=st.secrets["app_secrets"]["GEMINI_API_KEY"])
     model = genai.GenerativeModel('gemini-1.5-flash')
     
-    # NEW: Initialize Embedding Model for PDF retrieval
+    # Initialize Embedding Model for PDF retrieval
     # It's crucial this matches the model used during ingestion (text-embedding-004)
     embeddings_model = GoogleGenerativeAIEmbeddings(
         model="models/text-embedding-004",
@@ -41,8 +39,7 @@ except Exception as e:
 
 
 # --- GOOGLE SEARCH FUNCTION ---
-# This function's name is now correctly formatted with underscores.
-def perform_Google_Search(query: str):
+def perform_Google Search(query: str):
     """Performs a Google search and returns formatted results."""
     try:
         url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
@@ -96,7 +93,7 @@ def retrieve_pdf_chunks(query: str, top_k: int = 3, match_threshold: float = 0.7
         return "Internal documentation retrieval failed."
 
 
-# --- DATABASE FUNCTIONS (Unchanged) ---
+# --- DATABASE FUNCTIONS ---
 def load_history():
     """Loads chat history from the Supabase database."""
     query = supabase.table("chat_history").select("*").order("created_at").execute()
@@ -107,7 +104,7 @@ def save_history(role, content):
     supabase.table("chat_history").insert([{"role": role, "content": content}]).execute()
 
 
-# --- PASSWORD FUNCTION (Unchanged) ---
+# --- PASSWORD FUNCTION ---
 def check_password():
     """Shows a password form and sets session state upon submission."""
     with st.form("password_form"):
@@ -135,54 +132,4 @@ def chatbot_app():
         for msg in db_history:
             history_for_gemini.append({"role": msg["role"], "parts": [msg["content"]]})
         
-        st.session_state.chat = model.start_chat(history=history_for_gemini)
-
-    for message in st.session_state.chat.history:
-        role = "assistant" if message.role == "model" else message.role
-        with st.chat_message(role):
-            st.markdown(message.parts[0].text)
-
-    if prompt := st.chat_input("What would you like to ask?"):
-        save_history("user", prompt)
-        with st.chat_message("user"):
-            st.markdown(prompt)
-
-        with st.spinner("Thinking..."):
-            # Perform PDF Retrieval
-            with st.spinner("Retrieving from internal documents..."):
-                pdf_context = retrieve_pdf_chunks(query=prompt, top_k=5, match_threshold=0.75) 
-            st.write(f"DEBUG APP: PDF Context: {pdf_context}") # ADD THIS LINE
-
-            # Perform Google Search
-            with st.spinner("Performing live Google search..."):
-                search_context = perform_Google_Search(query=prompt) 
-            st.write(f"DEBUG APP: Google Search Context: {search_context}")
-            
-            # Combine all contexts into a single prompt for Gemini
-            contextual_prompt = f"""
-            You are a helpful AI assistant. Answer the user's question by combining information from the provided internal documentation and real-time Google search results. Prioritize internal documentation if directly relevant and comprehensive. If information is contradictory, mention the discrepancy. If neither source provides sufficient information, state that.
-
-            Internal Documentation Context:
-            ---
-            {pdf_context}
-            ---
-            
-            Google Search Results:
-            ---
-            {search_context}
-            ---
-            
-            User's Question: "{prompt}"
-            """
-            
-            response = st.session_state.chat.send_message(contextual_prompt)
-            save_history("model", response.text)
-            with st.chat_message("assistant"):
-                st.markdown(response.text)
-
-
-# --- MAIN CONTROLLER ---
-if st.session_state.get("password_correct", False):
-    chatbot_app()
-else:
-    check_password()
+        st.session_state.chat = model.
