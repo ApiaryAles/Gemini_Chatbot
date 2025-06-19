@@ -145,6 +145,13 @@ def chatbot_app():
             st.markdown(prompt)
 
         with st.spinner("Thinking..."):
+            # Define the personalized user context
+            # This is hardcoded for demonstration based on remembered info.
+            # In a real app, this might come from a user profile database.
+            user_personal_context = """
+            The user of this chatbot is a professional brewery owner/operator at Fitzhugh Brewing, a small business located in Dripping Springs, Texas, United States.
+            """
+
             # Perform PDF Retrieval
             with st.spinner("Retrieving from internal documents..."):
                 pdf_context = retrieve_pdf_chunks(query=prompt, top_k=5, match_threshold=0.75) 
@@ -156,6 +163,11 @@ def chatbot_app():
             # Combine all contexts into a single prompt for Gemini
             contextual_prompt = f"""
             You are a helpful AI assistant. Answer the user's question by combining information from the provided internal documentation and real-time Google search results. Prioritize internal documentation if directly relevant and comprehensive. If information is contradictory, mention the discrepancy. If neither source provides sufficient information, state that.
+
+            ---
+            User Profile/Context:
+            {user_personal_context}
+            ---
 
             Internal Documentation Context:
             ---
